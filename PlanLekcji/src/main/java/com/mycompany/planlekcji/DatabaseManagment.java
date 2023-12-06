@@ -125,4 +125,12 @@ public class DatabaseManagment {
         
        return out;
     }
+    
+    public void closeCon(){
+        try {
+            con.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseManagment.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }

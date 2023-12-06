@@ -45,7 +45,7 @@ public class MainFrame extends javax.swing.JFrame {
             public boolean dispatchKeyEvent(KeyEvent e) {
                 if (e.getID() == KeyEvent.KEY_PRESSED) {
                     int key = Character.getNumericValue(e.getKeyChar());
-                    if (key >= 1 && key <= 5) {
+                    if (key >= 1 && key <= 5 && !jDialog1.isVisible()) {
                         int index = key - 1;
                         if (index < jTabbedPane1.getTabCount()) {
                             jTabbedPane1.setSelectedIndex(index);
@@ -502,6 +502,7 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jComboBox1ItemStateChanged
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        dbManagment.closeCon();
         System.exit(0);
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
@@ -548,7 +549,6 @@ public class MainFrame extends javax.swing.JFrame {
                 dbManagment.commitQuery("INSERT INTO Przedmioty (nazwa) VALUES ('" + names[x] + "');");
             }
             String query = "UPDATE " + classa + " SET przedmiot_id = (SELECT id FROM Przedmioty WHERE nazwa = '" + names[x] + "') WHERE dzien = '" + day + "' AND godzina = " + (x+1) + ";";
-            System.out.println(query);
             dbManagment.commitQuery(query);
         }
         
