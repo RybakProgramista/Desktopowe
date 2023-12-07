@@ -85,6 +85,7 @@ public class MainFrame extends javax.swing.JFrame {
     }
     
     void setAllClasses(){
+        jComboBox1.removeAllItems();
         List<String> classes = dbManagment.getTables();
         for(int x = 0; x < classes.size(); x++){
             jComboBox1.addItem(classes.get(x));
@@ -635,7 +636,7 @@ public class MainFrame extends javax.swing.JFrame {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         String newClassa = "Plan" + jTextField10.getText();
         
-        String query = "CREATE TABLE IF NOT EXISTS '"+ newClassa +" ('id' INTEGER PRIMARY KEY AUTOINCREMENT, 'dzien' TEXT, 'godzina' INTEGER, 'przedmiot_id' INTEGER, FOREIGN KEY ('przedmiot_id') REFERENCES 'Przedmioty' ('id'));";
+        String query = "CREATE TABLE IF NOT EXISTS "+ newClassa +" ('id' INTEGER PRIMARY KEY AUTOINCREMENT, 'dzien' TEXT, 'godzina' INTEGER, 'przedmiot_id' INTEGER, FOREIGN KEY ('przedmiot_id') REFERENCES 'Przedmioty' ('id'));";
         System.out.println(query);
         dbManagment.commitQuery(query);
         
