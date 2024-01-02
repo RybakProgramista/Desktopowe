@@ -31,7 +31,7 @@ import org.nd4j.linalg.factory.Nd4j;
 public class Detector {
     private JDA bot;
     public Detector(){
-        String token = "MTE4NzMyNDQwODY5MjQ4MjA5OA.GxV6dH.li0NB3eQnO9EcQqfEoudkMyl_XxhHEdcS14BaQ"; //<- TOKEN
+        String token = "MTE4NzMyNDQwODY5MjQ4MjA5OA.GfPc79.djEU1aYEqNRN1L5VQRYOKv5csJdRtxpZ3Hf8xU"; //<- TOKEN
         bot = JDABuilder.createDefault(token, GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_MESSAGES, GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MESSAGE_TYPING)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .addEventListeners(new MyListener())
@@ -56,7 +56,7 @@ class MyListener extends ListenerAdapter{
             
             if(msg.equals("-Investigate")){
                 try {
-                    String simpleMlp = new ClassPathResource("simple_mlp.h5").getFile().getPath();
+                    String simpleMlp = new ClassPathResource("detektyw.h5").getFile().getPath();
                     MultiLayerNetwork model = KerasModelImport.importKerasSequentialModelAndWeights(simpleMlp);
                     
                     INDArray input = Nd4j.create("cumburger");
