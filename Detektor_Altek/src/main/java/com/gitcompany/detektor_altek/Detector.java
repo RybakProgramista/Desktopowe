@@ -5,12 +5,15 @@
 package com.gitcompany.detektor_altek;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageHistory;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -31,7 +34,7 @@ import org.nd4j.linalg.factory.Nd4j;
 public class Detector {
     private JDA bot;
     public Detector(){
-        String token = "MTE4NzMyNDQwODY5MjQ4MjA5OA.GfPc79.djEU1aYEqNRN1L5VQRYOKv5csJdRtxpZ3Hf8xU"; //<- TOKEN
+        String token = "MTE4NzMyNDQwODY5MjQ4MjA5OA.GS1QlW.W21AHfezKozfmrLBn4CnVuW23BbhZr1H0J-nB0"; //<- TOKEN
         bot = JDABuilder.createDefault(token, GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_MESSAGES, GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MESSAGE_TYPING)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .addEventListeners(new MyListener())
@@ -54,19 +57,15 @@ class MyListener extends ListenerAdapter{
             MessageChannelUnion channel = event.getChannel();
             
             
-            if(msg.equals("-Investigate")){
-                try {
-                    String simpleMlp = new ClassPathResource("detektyw.h5").getFile().getPath();
-                    MultiLayerNetwork model = KerasModelImport.importKerasSequentialModelAndWeights(simpleMlp);
-                    
-                    INDArray input = Nd4j.create("cumburger");
-                    System.out.println(model.predict(input)[0]);
-                } catch (IOException ex) {
-                    Logger.getLogger(MyListener.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (InvalidKerasConfigurationException ex) {
-                    Logger.getLogger(MyListener.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (UnsupportedKerasConfigurationException ex) {
-                    Logger.getLogger(MyListener.class.getName()).log(Level.SEVERE, null, ex);
+            if(msg.contains("-Investigate")){
+                String id = msg.replaceAll("-Investigate ", "").substring(2, msg.replaceAll("-Investigate ", "").length() - 1);
+                Member member = event.getGuild().getMemberById(id);
+                
+                MessageHistory history = MessageHistory.getHistoryFromBeginning(channel).complete();
+                List<Message> mess = history.getRetrievedHistory();
+                
+                for(int x = 0; x <  mess.size(); x++){
+                    System.out.println(mess.get(x).getContentRaw());
                 }
             }
             else if(msg.contains("-DDOX")){
