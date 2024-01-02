@@ -4,7 +4,10 @@
  */
 package com.gitcompany.detektor_altek;
 
+import java.io.IOException;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Member;
@@ -13,6 +16,13 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
+import org.deeplearning4j.nn.modelimport.keras.KerasModelImport;
+import org.deeplearning4j.nn.modelimport.keras.exceptions.InvalidKerasConfigurationException;
+import org.deeplearning4j.nn.modelimport.keras.exceptions.UnsupportedKerasConfigurationException;
+import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
+import org.nd4j.common.io.ClassPathResource;
+import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.factory.Nd4j;
 
 /**
  *
@@ -45,7 +55,19 @@ class MyListener extends ListenerAdapter{
             
             
             if(msg.equals("-Investigate")){
-                
+                try {
+                    String simpleMlp = new ClassPathResource("simple_mlp.h5").getFile().getPath();
+                    MultiLayerNetwork model = KerasModelImport.importKerasSequentialModelAndWeights(simpleMlp);
+                    
+                    INDArray input = Nd4j.create("cumburger");
+                    System.out.println(model.predict(input)[0]);
+                } catch (IOException ex) {
+                    Logger.getLogger(MyListener.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (InvalidKerasConfigurationException ex) {
+                    Logger.getLogger(MyListener.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (UnsupportedKerasConfigurationException ex) {
+                    Logger.getLogger(MyListener.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
             else if(msg.contains("-DDOX")){
                 String id = msg.replaceAll("-DDOX ", "").substring(2, msg.replaceAll("-DDOX ", "").length() - 1);
