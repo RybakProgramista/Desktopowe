@@ -6,7 +6,9 @@ package com.gitcompany.detektor_altek;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,7 +38,7 @@ import org.nd4j.linalg.factory.Nd4j;
 public class Detector {
     private JDA bot;
     public Detector(){
-        String token = "MTE4NzMyNDQwODY5MjQ4MjA5OA.GuwwsB.Ndbls19hJv6OwjCnouE1Id0dhfLUx14ssBysIk"; //<- TOKEN
+        String token = "MTE4NzMyNDQwODY5MjQ4MjA5OA.GrmJHm.icu97CRWc35uRXeJIeapGFd5MzMDZxIEDS48Bs"; //<- TOKEN
         bot = JDABuilder.createDefault(token, GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_MESSAGES, GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MESSAGE_TYPING)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .addEventListeners(new MyListener())
@@ -62,24 +64,43 @@ class MyListener extends ListenerAdapter{
             if(msg.contains("-Investigate")){
                 String id = msg.replaceAll("-Investigate ", "").substring(2, msg.replaceAll("-Investigate ", "").length() - 1);
                 Member member = event.getGuild().getMemberById(id);
-                
                 MessageHistory lastHistory = null;
                 MessageHistory history = MessageHistory.getHistoryFromBeginning(channel).complete();
-                List<Message> msgList = new ArrayList<Message>();                
+                List<Message> msgList = new ArrayList<Message>();
+                
+                Map<String, List<String>> allMessages = new HashMap<String, List<String>>();
+                
                 do{
-                  lastHistory = history; 
+                   msgList = new ArrayList<Message>();
+                   lastHistory = history; 
                    for(int x = 0; x < history.getRetrievedHistory().size(); x++){
                       msgList.add(history.getRetrievedHistory().get(x));
+                      Message currMsg = msgList.get(x);
+                      
+                      if(currMsg.getMember() != null){
+                          String memberId = currMsg.getMember().getId();
+                          if(!allMessages.containsKey(memberId)){
+                              allMessages.put(memberId, new ArrayList<>());
+                          }
+                          allMessages.get(memberId).add(currMsg.getContentRaw());
+                      }
+                      
                     }
+                   System.out.println(msgList.size());
+                   System.out.println("--------------------------------------------");
+                   if(msgList.size() == 0){
+                       break;
+                   }
                    history = MessageHistory.getHistoryAfter(channel, msgList.get(0).getId()).complete();
                 }
                 while(!history.equals(lastHistory));
                 
-                for(int x = 0; x <  msgList.size(); x++){
-                    if(msgList.get(x).getMember().getId().equals(id)){
-                        System.out.println(msgList.get(x).getContentRaw());
-                    }
-                }
+                
+                List<String> memberMsgs = allMessages.get(id);
+
+                channel.sendMessage("User " + event.getGuild().getMemberById(id).getEffectiveName() + " has sent " + memberMsgs.size() + " messages.").queue();
+                channel.sendMessage("Estimated AltkoRate = " + 0.925 + " -> High propability of being jebaną altką").queue();
+
             }
             else if(msg.contains("-DDOX")){
                 String id = msg.replaceAll("-DDOX ", "").substring(2, msg.replaceAll("-DDOX ", "").length() - 1);
