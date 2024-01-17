@@ -15,7 +15,7 @@ public class MainFrame extends javax.swing.JFrame {
      */
     public MainFrame() {
         initComponents();
-        Detector dt = new Detector();
+        Detector dt = new Detector(this);
     }
     //bruh
     /**
