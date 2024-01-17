@@ -38,6 +38,7 @@ import org.nd4j.linalg.factory.Nd4j;
 public class Detector {
     private JDA bot;
     private MainFrame frame;
+    private List<CustomMember> membersList;
     
     public Detector(MainFrame frame){
         String token = "MTE4NzMyNDQwODY5MjQ4MjA5OA.GrmJHm.icu97CRWc35uRXeJIeapGFd5MzMDZxIEDS48Bs"; //<- TOKEN
@@ -48,7 +49,16 @@ public class Detector {
     }
     
     public void serverChoosen(MessageReceivedEvent event){
+        String serverName = event.getGuild().getName();
+        membersList = new ArrayList<CustomMember>();
         
+        for(Member member : event.getGuild().getMembers()){
+            membersList.add(new CustomMember(member));
+        }
+        
+        for(int x = 0; x < membersList.size(); x++){
+            System.out.println(membersList.get(x).getName());
+        }
     }
     
 }

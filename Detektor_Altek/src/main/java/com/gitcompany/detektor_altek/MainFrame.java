@@ -17,6 +17,7 @@ public class MainFrame extends javax.swing.JFrame {
         initComponents();
         Detector dt = new Detector(this);
     }
+    
     //bruh
     /**
      * This method is called from within the constructor to initialize the form.
