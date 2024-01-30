@@ -22,6 +22,7 @@ import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.deeplearning4j.nn.modelimport.keras.KerasModelImport;
 import org.deeplearning4j.nn.modelimport.keras.exceptions.InvalidKerasConfigurationException;
@@ -41,8 +42,10 @@ public class Detector {
     private List<CustomMember> membersList;
     
     public Detector(MainFrame frame){
-        String token = "MTE4NzMyNDQwODY5MjQ4MjA5OA.GrmJHm.icu97CRWc35uRXeJIeapGFd5MzMDZxIEDS48Bs"; //<- TOKEN
-        bot = JDABuilder.createDefault(token, GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_MESSAGES, GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MESSAGE_TYPING)
+        String token = ""; //<- TOKEN
+        bot = JDABuilder.createDefault(token)
+                .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_MESSAGES, GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MESSAGE_TYPING)
+                .setChunkingFilter(ChunkingFilter.ALL)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .addEventListeners(new MyListener(this))
                 .build();
@@ -51,9 +54,10 @@ public class Detector {
     public void serverChoosen(MessageReceivedEvent event){
         String serverName = event.getGuild().getName();
         membersList = new ArrayList<CustomMember>();
+        List<Member> temp = event.getGuild().getMembers();
         
-        for(Member member : event.getGuild().getMembers()){
-            membersList.add(new CustomMember(member));
+        for(int x = 0; x < temp.size(); x++){
+            membersList.add(new CustomMember(temp.get(x)));
         }
         
         for(int x = 0; x < membersList.size(); x++){
@@ -68,7 +72,7 @@ class MyListener extends ListenerAdapter{
     
     public MyListener(Detector detector){
         r = new Random();
-        detector = this.detector;
+        this.detector = detector;
     }
     
     @Override
