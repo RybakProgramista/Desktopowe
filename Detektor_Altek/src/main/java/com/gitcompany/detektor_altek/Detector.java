@@ -10,14 +10,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageHistory;
 import net.dv8tion.jda.api.entities.MessageHistory.MessageRetrieveAction;
+import net.dv8tion.jda.api.entities.UserSnowflake;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -40,6 +44,7 @@ public class Detector {
     private JDA bot;
     private MainFrame frame;
     private List<CustomMember> membersList;
+    private MessageReceivedEvent core;
     
     public Detector(MainFrame frame){
         String token = ""; //<- TOKEN
@@ -52,6 +57,7 @@ public class Detector {
     }
     
     public void serverChoosen(MessageReceivedEvent event){
+        core = event;
         String serverName = event.getGuild().getName();
         membersList = new ArrayList<CustomMember>();
         List<Member> temp = event.getGuild().getMembers();
@@ -59,10 +65,25 @@ public class Detector {
         for(int x = 0; x < temp.size(); x++){
             membersList.add(new CustomMember(temp.get(x)));
         }
-        
-        for(int x = 0; x < membersList.size(); x++){
-            System.out.println(membersList.get(x).getName());
+    }
+    
+    public List<CustomMember> getMembersList(){
+        return membersList;
+    }
+    
+    public void ban(CustomMember member){
+        TextChannel channel = core.getChannel().asTextChannel();
+        channel.sendMessage("Banning user " + member.getName()).queue();
+        channel.sendMessage("Reason = Being FUCKING alternatywka").queue();
+
+        Member temp = null;
+        for(Member m : core.getGuild().getMembers()){
+            if(m.getEffectiveName().equals(member.getName())){
+                temp = m;
+            }
         }
+        UserSnowflake user = temp;
+        core.getGuild().ban(user, 365 * 69, TimeUnit.DAYS).queue();
     }
     
 }
