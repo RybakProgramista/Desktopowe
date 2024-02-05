@@ -46,16 +46,22 @@ public class Detector {
     private MainFrame frame;
     private List<CustomMember> membersList;
     private MessageReceivedEvent core;
+    private MapaMysli mapaMysli;
     
     public Detector(MainFrame frame){
-        String token = "MTE4NzMyNDQwODY5MjQ4MjA5OA.Glgixb.ijUUSBWBNby3fVNB9BnrFOGgtrl9EV-XRm0aLw"; //<- TOKEN
+        String token = ""; //<- TOKEN
         this.frame = frame;
+        mapaMysli = new MapaMysli();
         bot = JDABuilder.createDefault(token)
                 .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_MESSAGES, GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MESSAGE_TYPING)
                 .setChunkingFilter(ChunkingFilter.ALL)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .addEventListeners(new MyListener(this))
                 .build();
+    }
+    
+    public MapaMysli getMapaMysli(){
+        return mapaMysli;
     }
     
     public void serverChoosen(MessageReceivedEvent event){
@@ -134,6 +140,13 @@ public class Detector {
         core.getGuild().ban(user, 7, TimeUnit.DAYS).queue();
     }
     
+    public void invest(int idinList){
+        CustomMember member = membersList.get(idinList);
+        
+        double out = mapaMysli.SiecNeuronowa(member.getMessages());
+        
+        core.getChannel().asTextChannel().sendMessage("Propability of being fucking alternatywka for " + member.getName() + " = " + out).queue();
+    }
 }
 class MyListener extends ListenerAdapter{
     Random r;
