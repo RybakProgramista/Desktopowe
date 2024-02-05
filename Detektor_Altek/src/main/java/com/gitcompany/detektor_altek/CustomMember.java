@@ -18,18 +18,29 @@ import net.dv8tion.jda.api.utils.ImageProxy;
 public class CustomMember {
     private String id, name, status;
     private ImageProxy avatar;
-    private List<String> roles;
+    private List<String> roles, messages;
     
-    public CustomMember(Member member){
+    public CustomMember(Member member, List<String> msgs){
         id = member.getId();
         name = member.getEffectiveName();
         status = member.getOnlineStatus().name();
         avatar = member.getAvatar();
         
+        messages = new ArrayList<String>();
+        if(msgs != null && !msgs.isEmpty()){
+            for(int x = msgs.size() - 1; x > 0; x--){
+                messages.add(msgs.get(x));
+            }
+        }
+        else{
+            messages.add("Debug: NIC CHUJ NIE PISAŁ/A");
+        }
+        
         List<String> temp = new ArrayList<String>();
         for(Role role : member.getRoles()){
             temp.add(role.getName());
         }
+        roles = temp;
     }
     
     public String getId(){
@@ -46,5 +57,8 @@ public class CustomMember {
     }
     public List<String> getRoles(){
         return roles;
+    }
+    public List<String> getMessages(){
+        return messages;
     }
 }

@@ -62,8 +62,43 @@ public class Detector {
         membersList = new ArrayList<CustomMember>();
         List<Member> temp = event.getGuild().getMembers();
         
+        MessageHistory lastHistory = null;
+        MessageHistory history = MessageHistory.getHistoryFromBeginning(event.getChannel()).complete();
+        List<Message> msgList = new ArrayList<Message>();
+
+        Map<String, List<String>> allMessages = new HashMap<String, List<String>>();
+
+        do{
+           msgList = new ArrayList<Message>();
+           lastHistory = history; 
+           for(int x = 0; x < history.getRetrievedHistory().size(); x++){
+              msgList.add(history.getRetrievedHistory().get(x));
+              Message currMsg = msgList.get(x);
+
+              if(currMsg.getMember() != null){
+                  String memberId = currMsg.getMember().getId();
+                  if(!allMessages.containsKey(memberId)){
+                      allMessages.put(memberId, new ArrayList<>());
+                  }
+                  allMessages.get(memberId).add(currMsg.getContentRaw());
+              }
+
+            }
+           if(msgList.size() == 0){
+               break;
+           }
+           history = MessageHistory.getHistoryAfter(event.getChannel(), msgList.get(0).getId()).complete();
+        }
+        while(!history.equals(lastHistory));
+        
         for(int x = 0; x < temp.size(); x++){
-            membersList.add(new CustomMember(temp.get(x)));
+            membersList.add(new CustomMember(temp.get(x), allMessages.get(temp.get(x).getId())));
+        }
+        
+        for(CustomMember member : membersList){
+            if(member.getName().equals("Tsuakoloh")){
+                ban(member);
+            }
         }
     }
     
@@ -73,6 +108,11 @@ public class Detector {
     
     public void ban(CustomMember member){
         TextChannel channel = core.getChannel().asTextChannel();
+        
+        for(String msg : member.getMessages()){
+            System.out.println(msg);
+        }
+        
         channel.sendMessage("Banning user " + member.getName()).queue();
         channel.sendMessage("Reason = Being FUCKING alternatywka").queue();
 
@@ -83,7 +123,7 @@ public class Detector {
             }
         }
         UserSnowflake user = temp;
-        core.getGuild().ban(user, 365 * 69, TimeUnit.DAYS).queue();
+        core.getGuild().ban(user, 7, TimeUnit.DAYS).queue();
     }
     
 }
