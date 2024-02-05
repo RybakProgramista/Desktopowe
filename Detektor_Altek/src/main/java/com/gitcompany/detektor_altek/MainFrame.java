@@ -4,6 +4,10 @@
  */
 package com.gitcompany.detektor_altek;
 
+import javax.swing.DefaultListModel;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+
 /**
  *
  * @author kkile
@@ -13,11 +17,21 @@ public class MainFrame extends javax.swing.JFrame {
     /**
      * Creates new form MainFrame
      */
+    
+    Detector dt;
+    
     public MainFrame() {
         initComponents();
-        //Detector dt = new Detector(this);
+        dt = new Detector(this);
         jDialog1.setLocationRelativeTo(null);
         jDialog1.setVisible(true);
+    }
+    
+    public javax.swing.JList<String> getList(){
+        return jList1;
+    }
+    public javax.swing.JLabel getServerNameLabel(){
+        return jLabel1;
     }
     
     //bruh
@@ -53,7 +67,6 @@ public class MainFrame extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
 
         jDialog1.setAlwaysOnTop(true);
-        jDialog1.setMaximumSize(new java.awt.Dimension(600, 300));
         jDialog1.setMinimumSize(new java.awt.Dimension(600, 300));
         jDialog1.setSize(new java.awt.Dimension(600, 300));
 
@@ -114,8 +127,6 @@ public class MainFrame extends javax.swing.JFrame {
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("NAZWA SERWERA");
 
-        jLabel2.setText("img");
-
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
         jLabel3.setText("Nick:");
 
@@ -140,6 +151,11 @@ public class MainFrame extends javax.swing.JFrame {
         jList1.setBackground(new java.awt.Color(153, 153, 153));
         jList1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jList1.setSelectionBackground(new java.awt.Color(204, 204, 204));
+        jList1.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                jList1ValueChanged(evt);
+            }
+        });
         jScrollPane1.setViewportView(jList1);
 
         jList2.setBackground(new java.awt.Color(153, 153, 153));
@@ -149,7 +165,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         jButton1.setBackground(new java.awt.Color(0, 102, 102));
         jButton1.setFont(new java.awt.Font("Segoe UI", 1, 48)); // NOI18N
-        jButton1.setText("INESTIGATE");
+        jButton1.setText("INVESTIGATE");
         jButton1.setBorder(null);
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -161,6 +177,11 @@ public class MainFrame extends javax.swing.JFrame {
         jButton2.setFont(new java.awt.Font("Segoe UI", 1, 48)); // NOI18N
         jButton2.setText("BAN");
         jButton2.setBorder(null);
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -207,7 +228,7 @@ public class MainFrame extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGap(39, 39, 39)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel7)
@@ -254,6 +275,27 @@ public class MainFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void jList1ValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_jList1ValueChanged
+        CustomMember selected = dt.getMembersList().get(jList1.getSelectedIndex());
+        
+//        ImageIcon icon = new ImageIcon(selected.getAvatar().getUrl());
+//        jLabel2.setIcon(icon);
+        
+        jLabel6.setText(selected.getId());
+        jLabel4.setText(selected.getName());
+        jLabel8.setText(selected.getStatus());
+        
+        DefaultListModel dlm = new DefaultListModel();
+        for(String role : selected.getRoles()){
+            dlm.addElement(role);
+        }
+        jList2.setModel(dlm);
+    }//GEN-LAST:event_jList1ValueChanged
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        dt.ban(jList1.getSelectedIndex());
+    }//GEN-LAST:event_jButton2ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -287,6 +329,10 @@ public class MainFrame extends javax.swing.JFrame {
                 new MainFrame().setVisible(true);
             }
         });
+    }
+    
+    public javax.swing.JDialog getDialog(){
+        return jDialog1;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

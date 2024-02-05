@@ -13,6 +13,7 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -47,7 +48,8 @@ public class Detector {
     private MessageReceivedEvent core;
     
     public Detector(MainFrame frame){
-        String token = ""; //<- TOKEN
+        String token = "MTE4NzMyNDQwODY5MjQ4MjA5OA.Glgixb.ijUUSBWBNby3fVNB9BnrFOGgtrl9EV-XRm0aLw"; //<- TOKEN
+        this.frame = frame;
         bot = JDABuilder.createDefault(token)
                 .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_MESSAGES, GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MESSAGE_TYPING)
                 .setChunkingFilter(ChunkingFilter.ALL)
@@ -58,7 +60,10 @@ public class Detector {
     
     public void serverChoosen(MessageReceivedEvent event){
         core = event;
-        String serverName = event.getGuild().getName();
+                
+        event.getChannel().asTextChannel().sendMessage("Loading messages...").queue();
+        
+        frame.getServerNameLabel().setText(event.getGuild().getName());
         membersList = new ArrayList<CustomMember>();
         List<Member> temp = event.getGuild().getMembers();
         
@@ -91,22 +96,25 @@ public class Detector {
         }
         while(!history.equals(lastHistory));
         
+        frame.getDialog().setVisible(false);
         for(int x = 0; x < temp.size(); x++){
             membersList.add(new CustomMember(temp.get(x), allMessages.get(temp.get(x).getId())));
         }
         
+        DefaultListModel dlm = new DefaultListModel();
         for(CustomMember member : membersList){
-            if(member.getName().equals("Tsuakoloh")){
-                ban(member);
-            }
+            dlm.addElement(member.getName());
         }
+        frame.getList().setModel(dlm);
+        event.getChannel().asTextChannel().sendMessage("Messages loaded! Time to ban some alt bitches!!!").queue();
     }
     
     public List<CustomMember> getMembersList(){
         return membersList;
     }
     
-    public void ban(CustomMember member){
+    public void ban(int idInList){
+        CustomMember member = membersList.get(idInList);
         TextChannel channel = core.getChannel().asTextChannel();
         
         for(String msg : member.getMessages()){
