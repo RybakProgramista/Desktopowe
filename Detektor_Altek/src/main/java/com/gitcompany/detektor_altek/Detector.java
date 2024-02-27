@@ -142,8 +142,17 @@ public class Detector {
     
     public void invest(int idinList){
         CustomMember member = membersList.get(idinList);
+        List<String> allMessages = member.getMessages();
+        List<String> eachWord = new ArrayList<>();
         
-        double out = mapaMysli.SiecNeuronowa(member.getMessages());
+        for(int x = 0; x < allMessages.size(); x++){
+            String[] temp = allMessages.get(x).split("[\s,.]+");
+            for( int y = 0; y < allMessages.size(); y++){
+                eachWord.add(temp[y]);
+            }
+        }
+        
+        double out = mapaMysli.SiecNeuronowa(eachWord);
         
         core.getChannel().asTextChannel().sendMessage("Propability of being fucking alternatywka for " + member.getName() + " = " + out).queue();
     }

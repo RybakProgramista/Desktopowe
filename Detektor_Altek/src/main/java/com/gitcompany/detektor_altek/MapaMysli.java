@@ -1,3 +1,4 @@
+package com.gitcompany.detektor_altek;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
